@@ -9,7 +9,7 @@
     "build": "node build/build.js",
     "server": "nodemon server/index.js",
     "wb":"watch-exec -c 'npm run build' -w src",
-    "watch-build":"watch-exec -c 'npm run build' -w src",
+    "watch-build":"npm run wb",
     "test": ""
   },
   "dependencies": {
