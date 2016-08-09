@@ -1,10 +1,12 @@
 <template>
   <div id="app">
     <hello></hello>
-    
+    <input v-model="newUser" v-on:keyup.enter="add">
     <ul>
       <li v-for="user in users">
-        <input type="text" value="{{user.name}}"> </input><a v-on:click="remove($index)">X</a>
+        <input type="text" v-model="user.name"></input>
+        <button  v-on:click="remove($index)">Remove</input>
+        <button  v-on:click="edit($index)">Save</input>
       </li>
     </ul>
 </template>
@@ -31,12 +33,34 @@ export default {
         (err) => {console.log(err)});
   },
   methods: {
+    add: function () {
+      var text = this.newUser.trim()
+      if (text) {
+        this.newUser = ''
+        var url ="/user/"
+        this.$http.post(url,{ name: text }).then(
+        (res) => {
+          this.users.push({ name: text })
+        }, 
+        (err) => {console.log(err)});
+      }
+    },
+    edit: function (index) {
+      var user = this.users[index]
+      if (user) {
+        var url ="/user/"+index
+        this.$http.put(url,user).then(
+        (res) => {
+          // this.users.push({ name: text })
+        }, 
+        (err) => {console.log(err)});
+      }
+    },
     remove: function (index) {
       console.log(index)
       var url = '/user/'+index
        this.$http.delete(url).then(
         (res) => {
-          // 特别小心：如果json是字符串形式，那么做v-for的时候是什么也看不到的
           this.$set('users',JSON.parse(res.data))
         }, 
         (err) => {console.log(err)});
