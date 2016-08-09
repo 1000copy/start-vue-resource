@@ -1,11 +1,12 @@
 <template>
   <div id="app">
-    <img class="logo" src="./assets/logo.png">
     <hello></hello>
-    <p>
-      Welcome user from {{msg}}
-    </p>
     
+    <ul>
+      <li v-for="user in users">
+        <input type="text" value="{{user.name}}"> </input><a v-on:click="remove($index)">X</a>
+      </li>
+    </ul>
 </template>
 
 <script>
@@ -15,22 +16,32 @@ export default {
   components: {
     Hello
   },
+  data:{
+    users:[{name:"1"}]
+  },
   ready: function() {
-      // console.log(this.$http.get)
-      // this.$http.get('http://httpbin.org/ip', function (data) {
-      //     console.log(JSON.stringify(data))
-      //     this.$set('msg', data)
-      // })
       var url = '/users'
       this.$http.get(url).then(
         (res) => {
-          var json = JSON.stringify(res.data)
-          this.$set('msg',json)
+          // var json = JSON.stringify(res.data)
+          console.log(res.data)
+          // 特别小心：如果json是字符串形式，那么做v-for的时候是什么也看不到的
+          this.$set('users',JSON.parse(res.data))
         }, 
         (err) => {console.log(err)});
-
-
   },
+  methods: {
+    remove: function (index) {
+      console.log(index)
+      var url = '/user/'+index
+       this.$http.delete(url).then(
+        (res) => {
+          // 特别小心：如果json是字符串形式，那么做v-for的时候是什么也看不到的
+          this.$set('users',JSON.parse(res.data))
+        }, 
+        (err) => {console.log(err)});
+    }
+  }
 }
 </script>
 
